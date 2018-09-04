@@ -1,0 +1,81 @@
+version: "3"
+services: 
+  fpm: 
+    container_name: fpm
+    image: "azimao/php-fpm:2.0"
+    ports: 
+      - "9000:9000"
+    privileged: true
+    volumes: 
+      - "/home/azimao/web:/php"
+    networks:
+      myweb-net:
+        ipv4_address: 192.138.0.3
+
+  nginx: 
+    container_name: nginx 
+    image: "nginx:1.14.0-alpine"
+    healthcheck:
+      test: ["CMD", "curl","-s","-f", "http://localhost:8081"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    ports: 
+      - "80:80"
+      - "8081-8090:8081-8090"
+    privileged: true
+    volumes: 
+      - "/home/azimao/myDocker/nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "/home/azimao/myDocker/nginx/conf.d:/etc/nginx/conf.d"
+      - "/home/azimao/web:/usr/share/nginx/html"
+    networks:
+      myweb-net:
+        ipv4_address: 192.138.0.4
+
+  httpd: 
+    container_name: httpd 
+    image: "httpd:2.4-alpine"
+    ports: 
+      - "8091:80"
+    privileged: true
+    volumes: 
+      - "/home/azimao/myDocker/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf"
+      - "/home/azimao/web:/usr/local/apache2/htdocs/"
+    networks:
+      myweb-net:
+        ipv4_address: 192.138.0.5
+
+  mysql: 
+    container_name: mysql 
+    image: "mysql:5.7"
+    ports: 
+      - "3306:3306"
+    privileged: true
+    volumes: 
+      - "/home/azimao/myDocker/mysql/conf:/etc/mysql/conf.d"
+      - "/home/azimao/myDocker/mysql/data:/var/lib/mysql"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456    
+    networks:
+      myweb-net:
+        ipv4_address: 192.138.0.7
+
+  redis: 
+    container_name: redis 
+    image: "redis:alpine"
+    ports: 
+      - "6379:6379"
+    privileged: true
+    volumes: 
+      - "/home/azimao/myDocker/redis/redis.conf:/usr/local/etc/redis/redis.conf"
+      - "/home/azimao/myDocker/redis/data:/data"
+    networks:
+      myweb-net:
+        ipv4_address: 192.138.0.8
+
+networks:
+  myweb-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.138.0.0/16

@@ -1,0 +1,42 @@
+version: "3"
+services: 
+  fpm: 
+    container_name: fpm
+    image: "php:7.2.0-fpm-alpine3.6"
+    healthcheck:
+      test: ["CMD", "curl","-s","-f", "http://localhost:9000"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    ports: 
+      - "9000:9000"
+    privileged: true
+    volumes: 
+      - "/home/azimao/web:/php"
+    networks:
+      myweb-net:
+        ipv4_address: 192.138.0.3
+  nginx: 
+    container_name: nginx 
+    image: "nginx:1.14.0-alpine"
+    healthcheck:
+      test: ["CMD", "curl","-s","-f", "http://localhost:80"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    ports: 
+      - "80:80"
+    privileged: true
+    volumes: 
+      - "/home/azimao/conf/nginx.conf:/etc/nginx/nginx.conf"
+      - "/home/azimao/web:/usr/share/nginx/html"
+    networks:
+      myweb-net:
+        ipv4_address: 192.138.0.4
+
+networks:
+  myweb-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.138.0.0/16

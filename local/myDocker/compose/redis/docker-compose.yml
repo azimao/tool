@@ -1,0 +1,29 @@
+services: 
+  master: 
+    image: "redis"
+    ports: 
+      - "6379:6379"
+    volumes: 
+      - "/home/azimao/redistest/redis.conf:/usr/local/bin/redis.conf"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == azi
+    command: ["redis-server","/usr/local/bin/redis.conf"]
+      
+
+  slave: 
+    image: "redis"
+    ports: 
+      - "6378:6379"
+    volumes:
+      - "/home/azimao/redistest/slave.conf:/usr/local/bin/redis.conf"
+    deploy:
+      mode: replicated	
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
+    command: ["redis-server","/usr/local/bin/redis.conf"]
+
+version: "3"
