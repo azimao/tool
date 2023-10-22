@@ -145,10 +145,6 @@ alias -s bz2='tar -xjvf'
 #alias empjump='sshpass -p \$Maomao320 ssh -p 2222 maoyu@10.4.6.13'
 
 
-alias vt='ssh root@207.148.17.179'
-alias tx='ssh root@111.230.175.118'
-alias al='ssh root@47.240.47.7'
-alias ahao='ssh root@119.91.69.194'
 alias s='sudo'
 alias dc='docker-compose'
 alias sb='open -a /Applications/Sublime\ Text.app'
